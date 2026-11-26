@@ -263,7 +263,7 @@ function setAlertSound(on){
 function tick(){
   if(!S.running)return;
   var n=.1,e=ear();
-  var r=e<S.earThr?S.drowsyT+n:0,al=r>=S.hold;
+  var r=(S.keyOn&&e<S.earThr)?S.drowsyT+n:0,al=S.keyOn&&r>=S.hold;
   if(al!==alertPrev){alertPrev=al;setAlertSound(al);log(al?"تنبيه نعاس: صوت وشاشة واهتزاز الكرسي":"السواق رجع صاحي والتنبيه اتقفل")}
   if(!S.gas)S.gasLock=false;
   if(al&&S.gas&&!S.gasLock){S.gasLock=true;log("نعاس: البنزين اتفصل والعربية بتهدّى لحد الوقوف")}
@@ -277,7 +277,7 @@ function tick(){
   var u=VNOM*S.ah,d=Math.max(0,S.soc-l*n/3600/u*100*12);
   S.km+=sp*n/3600*(S.reverse?0:1)*12;
   S.speed=sp;S.soc=d;S.powerW=d<=0?0:l;S.drowsyT=r;S.alert=al;
-  S.hist.push(e);if(S.hist.length>60)S.hist.shift();
+  if(S.keyOn){S.hist.push(e);if(S.hist.length>60)S.hist.shift()}
   render();
 }
 
@@ -293,11 +293,11 @@ function render(){
   var cls=S.soc>40?"ok":S.soc>15?"mid":"low";$("bat").className=cls;
   var nf=Math.round(S.soc/100*20);for(var i=0;i<20;i++)batEls[i].className=i<nf?"f":"";
   // driver
-  var e=ear(),closed=e<S.earThr,ry=Math.max(1.5,(S.blink?8:S.open)/100*22);
+  var e=ear(),closed=S.keyOn&&e<S.earThr,ry=Math.max(1.5,(S.blink?8:S.open)/100*22);
   $("sc").setAttribute("ry",ry);$("ir").setAttribute("r",Math.min(9,Math.max(.5,ry-1)));$("pu").setAttribute("r",Math.min(4,Math.max(.3,ry-3)));
   $("cam").className=closed?"closed":"";
-  $("ear").textContent="EAR = "+e.toFixed(2);$("ear").className="ltr"+(closed?" closed":"");
-  $("dstate").textContent=closed?("العين مقفولة "+S.drowsyT.toFixed(1)+" ث"):"العين مفتوحة";
+  $("ear").textContent=S.keyOn?"EAR = "+e.toFixed(2):"EAR = --";$("ear").className="ltr"+(closed?" closed":"");
+  $("dstate").textContent=!S.keyOn?"الذكاء الاصطناعي مطفي: شغّل العربية":closed?("العين مقفولة "+S.drowsyT.toFixed(1)+" ث"):"العين مفتوحة";
   $("hold").firstChild.style.width=Math.min(100,S.drowsyT/S.hold*100)+"%";
   var pts=S.hist.map(function(v,i){return (i*120/59).toFixed(1)+","+(32-v/.4*30).toFixed(1)}).join(" ");
   $("pl").setAttribute("points",pts);
