@@ -297,13 +297,13 @@ function render(){
   $("sc").setAttribute("ry",ry);$("ir").setAttribute("r",Math.min(9,Math.max(.5,ry-1)));$("pu").setAttribute("r",Math.min(4,Math.max(.3,ry-3)));
   $("cam").className=closed?"closed":"";
   $("ear").textContent=S.keyOn?"EAR = "+e.toFixed(2):"EAR = --";$("ear").className="ltr"+(closed?" closed":"");
-  $("dstate").textContent=!S.keyOn?"الذكاء الاصطناعي مطفي: شغّل العربية":closed?("العين مقفولة "+S.drowsyT.toFixed(1)+" ث"):"العين مفتوحة";
+  $("dstate").textContent=!S.keyOn?"العربية مطفية: شغّل العربية":S.alert?("نعاس! العين مقفولة "+S.drowsyT.toFixed(1)+" ث"):closed?("العين مقفولة "+S.drowsyT.toFixed(1)+" ث"):"العين مفتوحة";
   $("hold").firstChild.style.width=Math.min(100,S.drowsyT/S.hold*100)+"%";
   var pts=S.hist.map(function(v,i){return (i*120/59).toFixed(1)+","+(32-v/.4*30).toFixed(1)}).join(" ");
   $("pl").setAttribute("points",pts);
   var ty=32-S.earThr/.4*30;$("thrLine").setAttribute("y1",ty);$("thrLine").setAttribute("y2",ty);
   document.body.classList.toggle("alert",S.alert);
-  $("alertT").textContent=S.alert?"نعاس! فوق وخد استراحة":(S.keyOn?"الكارت مراقب السواق: كله تمام":"الكارت في وضع الانتظار");
+  $("alertT").textContent=S.alert?"نعاس! فوق وخد استراحة":(S.keyOn?"الكارت مراقب السواق: كله تمام":"العربية مطفية: دوس تشغيل");
   $("seat").title=S.alert?"اهتزاز الكرسي شغال":"اهتزاز الكرسي ساكن";
   // controls
   $("chKey").className="chip"+(S.keyOn?" on":"");
